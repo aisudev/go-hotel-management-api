@@ -14,12 +14,11 @@ import (
 var DB *gorm.DB
 
 func init() {
-
 	// environment
 	utils.ViperInit()
+
 	// connection to db
 	DBConnection()
-
 }
 
 func main() {
@@ -37,7 +36,6 @@ func main() {
 }
 
 func DBConnection() {
-
 	var err error
 
 	DB, err = gorm.Open(sqlite.Open("db/poke.db"), &gorm.Config{})
@@ -47,5 +45,4 @@ func DBConnection() {
 	}
 
 	fmt.Println("DB is established...")
-
 }
