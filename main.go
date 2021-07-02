@@ -9,6 +9,8 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"github.com/mtslzr/pokeapi-go"
 )
 
 var DB *gorm.DB
@@ -26,7 +28,23 @@ func main() {
 	e := echo.New()
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Server is running")
+
+		r, _ := pokeapi.Resource("pokemon", 0, 10)
+
+		results := r.Results
+		var pokemons []map[string]interface{}
+
+		for _, poke := range results {
+			result, _ := pokeapi.Pokemon(poke.Name)
+
+			pokemons = append(pokemons, map[string]interface{}{
+				"id":      result.ID,
+				"name":    result.Name,
+				"imgUrls": result.Sprites,
+			})
+		}
+
+		return c.JSON(http.StatusOK, pokemons)
 	})
 
 	e.Logger.Fatal(
