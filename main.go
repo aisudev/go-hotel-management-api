@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"poke/domain"
 	"poke/utils"
 
 	"github.com/labstack/echo/v4"
@@ -20,6 +21,9 @@ func init() {
 
 	// connection to db
 	DBConnection()
+
+	// Auto Migration
+	AutoMigration()
 }
 
 func main() {
@@ -50,4 +54,8 @@ func DBConnection() {
 	}
 
 	fmt.Println("DB is established...")
+}
+
+func AutoMigration() {
+	DB.AutoMigrate(&domain.User{}, &domain.Poke{})
 }
