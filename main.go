@@ -6,6 +6,7 @@ import (
 	"poke/utils"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -23,6 +24,10 @@ func init() {
 
 func main() {
 	e := echo.New()
+
+	// Middlewares
+	e.Use(middleware.CORS())
+	e.Use(middleware.Recover())
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Server is running")
