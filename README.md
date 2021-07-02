@@ -1,1 +1,1 @@
-# go-hotel-management-api
+# go-poke-api
