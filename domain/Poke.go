@@ -17,3 +17,23 @@ type Poke struct {
 	CreateAt  *time.Time     `gorm:"autoCreateTime" json:"-"`
 	DeleteAt  gorm.DeletedAt `json:"-"`
 }
+
+type PokeRepository interface {
+	GetPoke(string) (*Poke, error)
+	GetAllPoke(string) ([]Poke, error)
+	CreatePoke(*Poke) error
+	UpdatePoke(map[string]interface{}) error
+	DeletePoke(string) error
+}
+
+type PokeUsecase interface {
+	GetMorePokeAPI(int, int) ([]map[string]interface{}, error)
+	GetPokeAPI(interface{}) (map[string]interface{}, error)
+	GetPokeImageAPI(interface{}) ([]string, error)
+	CreatePoke(uint, string) error
+	GetPoke(string) (map[string]interface{}, error)
+	GetAllPoke() ([]map[string]interface{}, error)
+	UpdatePoke(string, map[string]interface{}) error
+	DeletePoke(string) error
+	VerifyPoke(string) error
+}
