@@ -28,8 +28,8 @@ type PokeRepository interface {
 
 type PokeUsecase interface {
 	GetMorePokeAPI(int, int) ([]map[string]interface{}, error)
-	GetPokeAPI(interface{}) (map[string]interface{}, error)
-	GetPokeImageAPI(interface{}) ([]string, error)
+	GetPokeAPI(string) ([]map[string]interface{}, error)
+	GetPokeImageAPI(string) (map[string]interface{}, error)
 	CreatePoke(uint, string) error
 	GetPoke(string) (map[string]interface{}, error)
 	GetAllPoke() ([]map[string]interface{}, error)
