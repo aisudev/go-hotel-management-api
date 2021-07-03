@@ -26,7 +26,7 @@ type UserRepository interface {
 }
 
 type UserUsecase interface {
-	CreateUser(*User) error
+	CreateUser(string, string) error
 	GetUser(string) (*User, error)
 	UpdateUser(string, map[string]interface{}) error
 	DeleteUser(string) error

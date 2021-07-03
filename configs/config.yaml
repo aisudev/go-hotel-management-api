@@ -1,2 +1,6 @@
 app:
   port: 9999
+
+jwt:
+  access_secret: access
+  refresh_secret: refresh

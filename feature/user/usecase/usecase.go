@@ -12,18 +12,30 @@ func NewUserUsecase(repo domain.UserRepository) domain.UserUsecase {
 	}
 }
 
-func (r *userUsecase) CreateUser(user *domain.User) error {
-	return nil
+// CREATE USER USECASE
+func (u *userUsecase) CreateUser(uuid string, name string) error {
+	user := domain.User{
+		UUID:        uuid,
+		Name:        name,
+		Balance:     0,
+		Exp:         0,
+		DefaultPoke: "",
+	}
+
+	return u.repo.CreateUser(&user)
 }
 
-func (r *userUsecase) GetUser(uuid string) (*domain.User, error) {
-	return nil, nil
+// GET USER USECASE
+func (u *userUsecase) GetUser(uuid string) (*domain.User, error) {
+	return u.repo.GetUser(uuid)
 }
 
-func (r *userUsecase) UpdateUser(uuid string, newUser map[string]interface{}) error {
-	return nil
+// UPDATE USER USECASE
+func (u *userUsecase) UpdateUser(uuid string, newUser map[string]interface{}) error {
+	return u.repo.UpdateUser(uuid, newUser)
 }
 
-func (r *userUsecase) DeleteUser(uuid string) error {
-	return nil
+// DELETE USER USECASE
+func (u *userUsecase) DeleteUser(uuid string) error {
+	return u.repo.DeleteUser(uuid)
 }
