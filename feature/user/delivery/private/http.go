@@ -36,10 +36,22 @@ func (h *Handler) GetUserHandler(c echo.Context) error {
 
 // UPDATE USER HANDLER
 func (h *Handler) UpdateUserHandler(c echo.Context) error {
-	var reqMap map[string]interface{}
+	type Reg struct {
+		Name        string `json:"name"`
+		DefaultPoke string `json:"default_poke"`
+	}
 
-	if err := c.Bind(&reqMap); err != nil {
+	reqStruct := Reg{}
+
+	if err := c.Bind(&reqStruct); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
+	}
+
+	reqMap := map[string]interface{}{}
+	for k, v := range map[string]string{"name": reqStruct.Name, "default_poke": reqStruct.DefaultPoke} {
+		if v != "" {
+			reqMap[k] = v
+		}
 	}
 
 	uuid := c.Get("uuid")

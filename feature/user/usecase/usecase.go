@@ -39,3 +39,19 @@ func (u *userUsecase) UpdateUser(uuid string, newUser map[string]interface{}) er
 func (u *userUsecase) DeleteUser(uuid string) error {
 	return u.repo.DeleteUser(uuid)
 }
+
+// EXIST USER USECASE
+func (u *userUsecase) ExistUser(uuid string) (bool, error) {
+	var user *domain.User
+	var err error
+
+	if user, err = u.GetUser(uuid); err != nil {
+		return false, nil
+	}
+
+	if user.UUID == "" {
+		return false, nil
+	}
+
+	return true, nil
+}

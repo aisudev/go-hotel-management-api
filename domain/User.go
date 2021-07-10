@@ -30,4 +30,5 @@ type UserUsecase interface {
 	GetUser(string) (*User, error)
 	UpdateUser(string, map[string]interface{}) error
 	DeleteUser(string) error
+	ExistUser(string) (bool, error)
 }

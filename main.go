@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"poke/domain"
 	"poke/middlewares"
 	"poke/utils"
@@ -43,10 +42,6 @@ func main() {
 	// Middlewares
 	e.Use(middleware.CORS())
 	e.Use(middleware.Recover())
-
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Server is running")
-	})
 
 	// Group
 	private := e.Group("")
