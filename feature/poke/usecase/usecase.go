@@ -1,8 +1,11 @@
 package usecase
 
 import (
+	"errors"
+	"math/rand"
 	"poke/domain"
 
+	"github.com/gofrs/uuid"
 	"github.com/mtslzr/pokeapi-go"
 )
 
@@ -82,24 +85,82 @@ func (u *pokeUsecase) GetPokeImageAPI(name string) (map[string]interface{}, erro
 	return images, nil
 }
 
-func (u *pokeUsecase) CreatePoke(specie_id uint, name string) error {
-	return nil
+func (u *pokeUsecase) CreatePoke(uid string, specie_id uint, name string) error {
+	poke_id, _ := uuid.NewV1()
+	poke := domain.Poke{
+		Poke_id:   poke_id.String(),
+		UUID:      uid,
+		Specie_id: specie_id,
+		Name:      name,
+		Exp:       0,
+		Health:    100,
+		MaxHealth: 100,
+		Damage:    float32(rand.Intn(10) + 5),
+	}
+
+	return u.repo.CreatePoke(&poke)
 }
 
 func (u *pokeUsecase) GetPoke(poke_id string) (map[string]interface{}, error) {
-	return nil, nil
+	poke, err := u.repo.GetPoke(poke_id)
+	if err != nil {
+		return nil, err
+	}
+
+	if poke.Poke_id == "" {
+		return nil, errors.New("empty pokes.")
+	}
+
+	return map[string]interface{}{
+		"poke_id":   poke.Poke_id,
+		"specie_id": poke.Specie_id,
+		"name":      poke.Name,
+		"health":    poke.Health,
+		"damage":    poke.Damage,
+	}, nil
 }
 
-func (u *pokeUsecase) GetAllPoke() ([]map[string]interface{}, error) {
-	return nil, nil
+func (u *pokeUsecase) GetAllPoke(uuid string) ([]map[string]interface{}, error) {
+	pokes, err := u.repo.GetAllPoke(uuid)
+	if err != nil {
+		return nil, err
+	}
+
+	result := []map[string]interface{}{}
+	for _, poke := range pokes {
+		result = append(result, map[string]interface{}{
+			"poke_id":    poke.Poke_id,
+			"specie_id":  poke.Specie_id,
+			"name":       poke.Name,
+			"health":     poke.Health,
+			"damage":     poke.Damage,
+			"max_health": poke.MaxHealth,
+		})
+	}
+
+	return result, nil
 }
 
-func (u *pokeUsecase) UpdatePoke(poke_id string, newPoke map[string]interface{}) error {
-	return nil
+func (u *pokeUsecase) ChangeNamePoke(poke_id string, name string) error {
+	return u.repo.UpdatePoke(poke_id, map[string]interface{}{
+		"name": name,
+	})
+}
+
+// TODO: ADD WITHDRAW BALANCE
+func (u *pokeUsecase) TreatPoke(poke_id string) error {
+	poke, err := u.GetPoke(poke_id)
+	if err != nil {
+		return err
+	}
+
+	return u.repo.UpdatePoke(poke_id, map[string]interface{}{
+		"health": poke["max_health"],
+	})
 }
 
 func (u *pokeUsecase) DeletePoke(poke_id string) error {
-	return nil
+	return u.repo.DeletePoke(poke_id)
 }
 
 func (u *pokeUsecase) VerifyPoke(poke_id string) error {

@@ -55,3 +55,5 @@ func (u *userUsecase) ExistUser(uuid string) (bool, error) {
 
 	return true, nil
 }
+
+// TODO: DIPOSIT & WITHDRAW

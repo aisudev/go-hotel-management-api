@@ -33,7 +33,7 @@ func init() {
 	DBConnection()
 
 	// Auto Migration
-	AutoMigration()
+	// AutoMigration()
 }
 
 func main() {
