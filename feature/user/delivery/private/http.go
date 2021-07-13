@@ -19,6 +19,9 @@ func NewUserPrivateHandler(e *echo.Group, usecase domain.UserUsecase) *Handler {
 	e.PUT("/user", h.UpdateUserHandler)
 	e.DELETE("/user", h.DeleteUserHandler)
 
+	e.PUT("/user/withdraw", h.WithdrawHandler)
+	e.PUT("/user/deposit", h.DepositHandler)
+
 	return &h
 }
 
@@ -44,12 +47,12 @@ func (h *Handler) GetUserHandler(c echo.Context) error {
 	@body: {name, default_poke}
 */
 func (h *Handler) UpdateUserHandler(c echo.Context) error {
-	type Reg struct {
+	type Req struct {
 		Name        string `json:"name"`
 		DefaultPoke string `json:"default_poke"`
 	}
 
-	reqStruct := Reg{}
+	reqStruct := Req{}
 
 	if err := c.Bind(&reqStruct); err != nil {
 		return c.JSON(http.StatusBadRequest, utils.Response(false, "", nil, err))
@@ -71,9 +74,49 @@ func (h *Handler) UpdateUserHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, utils.Response(true, "user updated.", nil, nil))
 }
 
-// TODO: Update balance.
+/*
+	@api: Withdraw
+	@method: PUT
+*/
+func (h *Handler) WithdrawHandler(c echo.Context) error {
+	type Req struct {
+		Balance float32 `json:"balance"`
+	}
 
-// TODO: Update Exp.
+	reqStruct := Req{}
+	if err := c.Bind(&reqStruct); err != nil {
+		return c.JSON(http.StatusBadRequest, utils.Response(false, "", nil, err))
+	}
+
+	uuid := c.Get("uuid")
+	if err := h.usecase.Withdraw(uuid.(string), reqStruct.Balance); err != nil {
+		return c.JSON(http.StatusBadRequest, utils.Response(false, "", nil, err))
+	}
+
+	return c.JSON(http.StatusOK, utils.Response(true, "withdraw success.", nil, nil))
+}
+
+/*
+	@api: Deposit
+	@method: PUT
+*/
+func (h *Handler) DepositHandler(c echo.Context) error {
+	type Req struct {
+		Balance float32 `json:"balance"`
+	}
+
+	reqStruct := Req{}
+	if err := c.Bind(&reqStruct); err != nil {
+		return c.JSON(http.StatusBadRequest, utils.Response(false, "", nil, err))
+	}
+
+	uuid := c.Get("uuid")
+	if err := h.usecase.Deposit(uuid.(string), reqStruct.Balance); err != nil {
+		return c.JSON(http.StatusBadRequest, utils.Response(false, "", nil, err))
+	}
+
+	return c.JSON(http.StatusOK, utils.Response(true, "deposit success.", nil, nil))
+}
 
 /*
 	@api: DeleteUser

@@ -10,10 +10,14 @@ type userRepository struct {
 	db *gorm.DB
 }
 
+var UserRepoInstance *userRepository
+
 func NewUserRepository(db *gorm.DB) domain.UserRepository {
-	return &userRepository{
+	UserRepoInstance = &userRepository{
 		db: db,
 	}
+
+	return UserRepoInstance
 }
 
 func (r *userRepository) CreateUser(user *domain.User) error {

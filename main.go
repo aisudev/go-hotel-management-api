@@ -2,15 +2,12 @@ package main
 
 import (
 	"fmt"
-	"poke/domain"
 	"poke/middlewares"
 	"poke/utils"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 
 	privateUserDelivery "poke/feature/user/delivery/private"
 	publicUserDelivery "poke/feature/user/delivery/public"
@@ -23,17 +20,15 @@ import (
 	pokeUsecase "poke/feature/poke/usecase"
 )
 
-var DB *gorm.DB
-
 func init() {
 	// environment
 	utils.ViperInit()
 
 	// connection to db
-	DBConnection()
+	utils.DBConnection()
 
 	// Auto Migration
-	// AutoMigration()
+	// utils.AutoMigration()
 }
 
 func main() {
@@ -53,13 +48,13 @@ func main() {
 	// Private
 	privateUserDelivery.NewUserPrivateHandler(private,
 		userUsecase.NewUserUsecase(
-			userRepo.NewUserRepository(DB),
+			userRepo.NewUserRepository(utils.DB),
 		),
 	)
 	// Public
 	publicUserDelivery.NewUserPublicHandler(public,
 		userUsecase.NewUserUsecase(
-			userRepo.NewUserRepository(DB),
+			userRepo.NewUserRepository(utils.DB),
 		),
 	)
 
@@ -67,13 +62,13 @@ func main() {
 	// Private
 	privatePokeDelivery.NewPokePrivateHandler(private,
 		pokeUsecase.NewPokeUsecase(
-			pokeRepo.NewPokeRepository(DB),
+			pokeRepo.NewPokeRepository(utils.DB),
 		),
 	)
 	// Public
 	publicPokeDelivery.NewPokePublicHandler(public,
 		pokeUsecase.NewPokeUsecase(
-			pokeRepo.NewPokeRepository(DB),
+			pokeRepo.NewPokeRepository(utils.DB),
 		),
 	)
 
@@ -83,20 +78,4 @@ func main() {
 			fmt.Sprintf(":%s", viper.GetString("app.port")),
 		),
 	)
-}
-
-func DBConnection() {
-	var err error
-
-	DB, err = gorm.Open(sqlite.Open("db/poke.db"), &gorm.Config{})
-
-	if err != nil {
-		panic(fmt.Errorf("fatal error db connection: %s \n", err))
-	}
-
-	fmt.Println("DB is established...")
-}
-
-func AutoMigration() {
-	DB.AutoMigrate(&domain.User{}, &domain.Poke{})
 }

@@ -15,11 +15,11 @@ type Handler struct {
 func NewPokePrivateHandler(e *echo.Group, usecase domain.PokeUsecase) *Handler {
 	h := Handler{usecase: usecase}
 
-	e.GET("/poke/private", func(c echo.Context) error { return c.String(http.StatusOK, "POKE PRIVATE") })
-
 	e.POST("/poke", h.CreatePokeHandler)
 	e.GET("/poke/:poke_id", h.GetPokeHandler)
 	e.GET("/poke", h.GetAllPokeHandler)
+	e.PUT("/poke/treat/:poke_id", h.TreatPokeHandler)
+	e.PUT("/poke/name", h.ChangeNamePokeHandler)
 
 	return &h
 }
@@ -103,3 +103,5 @@ func (h *Handler) DeletePokeHandler(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, utils.Response(true, "deleted.", nil, nil))
 }
+
+// TODO: Update Exp.

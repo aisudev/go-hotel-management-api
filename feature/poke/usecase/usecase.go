@@ -7,16 +7,22 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/mtslzr/pokeapi-go"
+
+	userUsecase "poke/feature/user/usecase"
 )
 
 type pokeUsecase struct {
 	repo domain.PokeRepository
 }
 
+var PokeUsecaseInstance *pokeUsecase
+
 func NewPokeUsecase(repo domain.PokeRepository) domain.PokeUsecase {
-	return &pokeUsecase{
+	PokeUsecaseInstance = &pokeUsecase{
 		repo: repo,
 	}
+
+	return PokeUsecaseInstance
 }
 
 func (u *pokeUsecase) GetMorePokeAPI(offset int, limit int) ([]map[string]interface{}, error) {
@@ -147,15 +153,19 @@ func (u *pokeUsecase) ChangeNamePoke(poke_id string, name string) error {
 	})
 }
 
-// TODO: ADD WITHDRAW BALANCE
 func (u *pokeUsecase) TreatPoke(poke_id string) error {
-	poke, err := u.GetPoke(poke_id)
+	poke, err := u.repo.GetPoke(poke_id)
+	if err != nil {
+		return err
+	}
+
+	err = userUsecase.UserUsecaseInstance.Withdraw(poke.UUID, 20)
 	if err != nil {
 		return err
 	}
 
 	return u.repo.UpdatePoke(poke_id, map[string]interface{}{
-		"health": poke["max_health"],
+		"health": poke.MaxHealth,
 	})
 }
 

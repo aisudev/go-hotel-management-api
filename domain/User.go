@@ -31,4 +31,6 @@ type UserUsecase interface {
 	UpdateUser(string, map[string]interface{}) error
 	DeleteUser(string) error
 	ExistUser(string) (bool, error)
+	Withdraw(string, float32) error
+	Deposit(string, float32) error
 }

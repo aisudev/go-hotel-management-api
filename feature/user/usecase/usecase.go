@@ -1,15 +1,22 @@
 package usecase
 
-import "poke/domain"
+import (
+	"errors"
+	"poke/domain"
+)
 
 type userUsecase struct {
 	repo domain.UserRepository
 }
 
+var UserUsecaseInstance *userUsecase
+
 func NewUserUsecase(repo domain.UserRepository) domain.UserUsecase {
-	return &userUsecase{
+	UserUsecaseInstance = &userUsecase{
 		repo: repo,
 	}
+
+	return UserUsecaseInstance
 }
 
 // CREATE USER USECASE
@@ -56,4 +63,37 @@ func (u *userUsecase) ExistUser(uuid string) (bool, error) {
 	return true, nil
 }
 
-// TODO: DIPOSIT & WITHDRAW
+func (u *userUsecase) Withdraw(uuid string, amount float32) error {
+	user, err := u.repo.GetUser(uuid)
+	if err != nil {
+		return err
+	}
+
+	balance := user.Balance - amount
+	if balance <= 0 {
+		return errors.New("not enough balance.")
+	}
+
+	newData := map[string]interface{}{
+		"balance": balance,
+	}
+
+	return u.UpdateUser(uuid, newData)
+}
+
+func (u *userUsecase) Deposit(uuid string, amount float32) error {
+	user, err := u.repo.GetUser(uuid)
+	if err != nil {
+		return err
+	}
+
+	if amount <= 0 {
+		return errors.New("not valid amount.")
+	}
+
+	newData := map[string]interface{}{
+		"balance": user.Balance + amount,
+	}
+
+	return u.UpdateUser(uuid, newData)
+}

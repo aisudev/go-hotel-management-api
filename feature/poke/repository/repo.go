@@ -10,10 +10,14 @@ type pokeRepository struct {
 	db *gorm.DB
 }
 
+var PokeRepoInstance *pokeRepository
+
 func NewPokeRepository(db *gorm.DB) domain.PokeRepository {
-	return &pokeRepository{
+	PokeRepoInstance = &pokeRepository{
 		db: db,
 	}
+
+	return PokeRepoInstance
 }
 
 func (r *pokeRepository) GetPoke(poke_id string) (*domain.Poke, error) {
@@ -41,7 +45,8 @@ func (r *pokeRepository) CreatePoke(poke *domain.Poke) error {
 }
 
 func (r *pokeRepository) UpdatePoke(poke_id string, newPoke map[string]interface{}) error {
-	return r.db.Where("poke_id = ?", poke_id).Updates(newPoke).Error
+	var poke domain.Poke
+	return r.db.Model(&poke).Where("poke_id = ?", poke_id).Updates(newPoke).Error
 }
 
 func (r *pokeRepository) DeletePoke(poke_id string) error {
