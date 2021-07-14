@@ -23,5 +23,5 @@ func DBConnection() {
 }
 
 func AutoMigration() {
-	DB.AutoMigrate(&domain.User{}, &domain.Poke{})
+	DB.AutoMigrate(&domain.User{}, &domain.Poke{}, &domain.Contest{})
 }

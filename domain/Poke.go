@@ -17,6 +17,9 @@ type Poke struct {
 	Damage    float32        `gorm:"not null" json:"damage"`
 	CreateAt  *time.Time     `gorm:"autoCreateTime" json:"-"`
 	DeleteAt  gorm.DeletedAt `json:"-"`
+
+	ContestRed  []Contest `gorm:"foreignKey:CornerRed" json:""`
+	ContestBlue []Contest `gorm:"foreignKey:CornerBlue" json:""`
 }
 
 type PokeRepository interface {
@@ -34,6 +37,7 @@ type PokeUsecase interface {
 	CreatePoke(string, uint, string) error
 	GetPoke(string) (map[string]interface{}, error)
 	GetAllPoke(string) ([]map[string]interface{}, error)
+	UpdatePoke(string, map[string]interface{}) error
 	ChangeNamePoke(string, string) error
 	TreatPoke(string) error
 	DeletePoke(string) error

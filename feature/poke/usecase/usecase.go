@@ -70,7 +70,6 @@ func (u *pokeUsecase) GetPokeAPI(name string) ([]map[string]interface{}, error) 
 }
 
 func (u *pokeUsecase) GetPokeImageAPI(name string) (map[string]interface{}, error) {
-
 	resp, err := pokeapi.Pokemon(name)
 
 	if err != nil {
@@ -175,4 +174,8 @@ func (u *pokeUsecase) DeletePoke(poke_id string) error {
 
 func (u *pokeUsecase) VerifyPoke(poke_id string) error {
 	return nil
+}
+
+func (u *pokeUsecase) UpdatePoke(poke_id string, data map[string]interface{}) error {
+	return u.repo.UpdatePoke(poke_id, data)
 }

@@ -18,6 +18,10 @@ import (
 	publicPokeDelivery "poke/feature/poke/delivery/public"
 	pokeRepo "poke/feature/poke/repository"
 	pokeUsecase "poke/feature/poke/usecase"
+
+	privateContestDelivery "poke/feature/contest/delivery"
+	contestRepo "poke/feature/contest/repository"
+	contestUsecase "poke/feature/contest/usecase"
 )
 
 func init() {
@@ -69,6 +73,14 @@ func main() {
 	publicPokeDelivery.NewPokePublicHandler(public,
 		pokeUsecase.NewPokeUsecase(
 			pokeRepo.NewPokeRepository(utils.DB),
+		),
+	)
+
+	// Contest API
+	// Private
+	privateContestDelivery.NewContestHandler(private,
+		contestUsecase.NewContestUsecase(
+			contestRepo.NewContestRepositry(utils.DB),
 		),
 	)
 
